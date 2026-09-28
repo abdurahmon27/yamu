@@ -32,6 +32,12 @@ inputs:
     description: "Language for titles Yandex localises: en, ru, uz…"
     required: false
     default: "en"
+  api-base:
+    description: "A yamu proxy to fetch through. GitHub-hosted runners are answered with 451 by Yandex Music, so a proxy on a machine it serves is what makes a scheduled run work."
+    required: false
+  api-key:
+    description: "Key for a proxy started with `yamu serve --key`. Pass it from a secret."
+    required: false
   token:
     description: "Yandex OAuth token. Only needed for private data — pass it from a secret, never inline."
     required: false

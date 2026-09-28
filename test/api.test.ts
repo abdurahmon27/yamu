@@ -62,3 +62,24 @@ test("non-JSON is reported, not thrown raw", async () => {
 
   await assert.rejects(() => getPlaylist("me", "3", { fetchImpl: stub.fetch }), /not JSON/);
 });
+
+test("--api-base sends the request to the proxy instead", async () => {
+  const stub = stubFetch([{ body: fixture("playlist") }]);
+  await getPlaylist("me", "3", {
+    apiBase: "https://music-proxy.example.com/",
+    apiKey: "open-sesame",
+    fetchImpl: stub.fetch,
+  });
+
+  assert.equal(stub.calls[0]?.url, "https://music-proxy.example.com/users/me/playlists/3");
+  assert.equal(stub.calls[0]?.headers["x-yamu-key"], "open-sesame");
+});
+
+test("451 explains itself", async () => {
+  const stub = stubFetch([{ status: 451, body: { error: "region" } }]);
+
+  await assert.rejects(
+    () => getPlaylist("me", "3", { fetchImpl: stub.fetch }),
+    /region \(451\)/
+  );
+});

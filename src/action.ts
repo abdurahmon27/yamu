@@ -36,6 +36,8 @@ function buildArgv(): string[] {
   push("playlist", input("playlist"));
   push("tld", input("tld"));
   push("lang", input("lang"));
+  push("api-base", input("api-base"));
+  push("api-key", input("api-key"));
   push("limit", input("limit"));
   push("out", input("out") ?? "yamu.json");
   push("token", input("token"));

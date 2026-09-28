@@ -28,6 +28,36 @@ cannot honestly claim to know what you are listening to right now. What you get
 instead is a playlist, your liked tracks, and the list of playlists you made —
 all of which are true for as long as they are on screen.
 
+> **Read [Where this can run](#where-this-can-run) first.** Yandex Music
+> answers GitHub-hosted runners with 451, so a scheduled job needs either a
+> runner in a region it serves or a small proxy. Everything else below works
+> exactly as written.
+
+## Where this can run
+
+Yandex Music is licensed per country, and from anywhere it does not serve it
+answers **451 Unavailable For Legal Reasons** — every domain, `.ru`, `.uz`,
+`.com` and `.by` alike. That includes **every GitHub-hosted runner**: measured
+from one in Chicago, all five hosts returned 451. yamu says so in the error now
+instead of shrugging at it.
+
+So the fetch has to happen somewhere Yandex Music answers. Three ways:
+
+| Where it runs | How |
+|---|---|
+| **A machine in a region it serves** | Your own laptop or a VPS there — run `yamu fetch` from cron or a systemd timer and push the result. [Worked example](./examples/local-cron.md). |
+| **A self-hosted runner there** | The same workflow with `runs-on: self-hosted`. |
+| **A GitHub runner plus a proxy** | Run [`yamu serve`](#the-proxy) on a machine it serves and point the action at it with `api-base`. |
+
+One line tells you whether a given machine can do it:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" \
+  https://api.music.yandex.com/playlist/ch.448df3eb-daee-408a-a60a-252259db2f3b
+```
+
+`200` — that machine is fine. `451` — it is not.
+
 ## Quick start — a card in your profile README
 
 No token, no account anywhere, about two minutes:
@@ -173,9 +203,10 @@ token — see [Tokens](#tokens-and-when-you-do-not-need-one).
 ## CLI
 
 ```
-yamu fetch --user <uid|login> [options]
+yamu fetch --playlist <link> [options]
 yamu card  --in <data.json> --out <card.svg> [options]
 yamu url   <music.yandex link>
+yamu serve [--port 8787] [--key <secret>] [--token <token>]
 ```
 
 | Flag | Meaning |
@@ -195,13 +226,15 @@ yamu url   <music.yandex link>
 | `--width <px>` | Card width. Default 460. |
 | `--title <text>` | Override the card heading. |
 | `--no-footer` | Drop the "updated …" line. |
+| `--api-base <url>` | A `yamu serve` proxy to fetch through. |
+| `--api-key <secret>` | Key for a proxy started with `--key`. |
 | `--soft-fail` | On a failed fetch, keep what is on disk and exit 0. |
 
 ## Action inputs
 
-`user`, `playlist`, `playlists`, `likes`, `limit`, `tld`, `lang`, `token`,
-`out`, `card`, `theme`, `title`, `width`, `cover`, `soft-fail` — the same
-meanings as above. `soft-fail` defaults to `true`, so a bad day at Yandex
+`playlist`, `user`, `playlists`, `likes`, `limit`, `tld`, `lang`, `api-base`,
+`api-key`, `token`, `out`, `card`, `theme`, `title`, `width`, `cover`,
+`soft-fail` — the same meanings as above. `soft-fail` defaults to `true`, so a bad day at Yandex
 leaves your committed files untouched and your workflow green.
 
 Outputs: `json` and `card`, the paths that were written.
@@ -252,6 +285,40 @@ comes back `null` rather than missing, so your template never has to guess.
 The card is deliberately plain: no scripts, no external images, no CSS — GitHub
 strips all three from README images. The cover, when you ask for it, is
 embedded in the file.
+
+## The proxy
+
+When the fetch has to run on a GitHub runner, put the part that talks to Yandex
+on a machine it serves:
+
+```bash
+yamu serve --port 8787 --key "$YAMU_KEY"
+```
+
+Then point the action at it:
+
+```yaml
+      - uses: abdurahmon27/yamu@v1
+        with:
+          playlist: "https://music.yandex.com/playlists/lk.…"
+          api-base: "https://music-proxy.example.com"
+          api-key: ${{ secrets.YAMU_KEY }}
+```
+
+What the proxy is, precisely:
+
+- **Read-only, and narrow.** `GET` only, and only the five paths yamu reads —
+  a playlist by uuid, a playlist by owner and kind, a user's playlist list,
+  liked track ids, and track metadata. Everything else is a 404 before any
+  request leaves the machine.
+- **The token stays there.** If you start it with `--token`, that token is used
+  for the forwarded requests and never travels to the caller. Without one, the
+  proxy exposes exactly what is already public.
+- **Cached.** Identical requests are served from memory for a minute, so a
+  handful of repos refreshing daily is a handful of requests.
+- **Keyed, if you want.** `--key` requires an `x-yamu-key` header; without it,
+  anyone who can reach the port can read what the proxy can read. Put it behind
+  TLS — a two-line Caddy or nginx block is enough.
 
 ## Tokens, and when you do not need one
 

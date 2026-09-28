@@ -20,13 +20,27 @@ export class YamuError extends Error {
 export function apiBase(tld = DEFAULT_TLD) {
     return `https://api.music.yandex.${tld}`;
 }
+/** The proxy header `yamu serve --key` checks. */
+export const PROXY_KEY_HEADER = "x-yamu-key";
 export function siteBase(tld = DEFAULT_TLD) {
     return `https://music.yandex.${tld}`;
+}
+function describeStatus(status) {
+    if (status === 401 || status === 403) {
+        return "not allowed without a token, or the data is private";
+    }
+    if (status === 451) {
+        // Yandex Music is licensed per country and answers everyone else with 451,
+        // which is what a GitHub-hosted runner gets. See "Where this can run".
+        return "Yandex Music does not serve this machine's region (451) — run yamu somewhere it does, or point --api-base at a proxy that can";
+    }
+    return `unexpected status ${status}`;
 }
 async function request(endpoint, options = {}) {
     const { tld = DEFAULT_TLD, token, lang = "en", timeoutMs = DEFAULT_TIMEOUT_MS } = options;
     const doFetch = options.fetchImpl ?? globalThis.fetch;
-    const url = `${apiBase(tld)}${endpoint}`;
+    const base = options.apiBase ? options.apiBase.replace(/\/+$/, "") : apiBase(tld);
+    const url = `${base}${endpoint}`;
     const headers = {
         Accept: "application/json",
         "Accept-Language": lang,
@@ -34,6 +48,8 @@ async function request(endpoint, options = {}) {
     };
     if (token)
         headers["Authorization"] = `OAuth ${token}`;
+    if (options.apiKey)
+        headers[PROXY_KEY_HEADER] = options.apiKey;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     let response;
@@ -48,9 +64,7 @@ async function request(endpoint, options = {}) {
         clearTimeout(timer);
     }
     if (!response.ok) {
-        throw new YamuError(response.status === 401 || response.status === 403
-            ? "not allowed without a token, or the data is private"
-            : `unexpected status ${response.status}`, endpoint, response.status);
+        throw new YamuError(describeStatus(response.status), endpoint, response.status);
     }
     let body;
     try {

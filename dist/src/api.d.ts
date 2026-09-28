@@ -13,6 +13,8 @@ export declare class YamuError extends Error {
     constructor(message: string, endpoint: string, status?: number | null);
 }
 export declare function apiBase(tld?: Tld): string;
+/** The proxy header `yamu serve --key` checks. */
+export declare const PROXY_KEY_HEADER = "x-yamu-key";
 export declare function siteBase(tld?: Tld): string;
 /** A playlist by owner (numeric uid or login) and kind — the number in its URL. */
 export declare function getPlaylist(user: string, kind: string, options?: ClientOptions): Promise<unknown>;

@@ -1,4 +1,4 @@
-export { YamuError, apiBase, siteBase, DEFAULT_TLD } from "./api.js";
+export { YamuError, apiBase, siteBase, DEFAULT_TLD, PROXY_KEY_HEADER } from "./api.js";
 export {
   collect,
   fetchLikes,
@@ -11,6 +11,8 @@ export type { CollectOptions } from "./fetch.js";
 export { coverUrl, playlistUrl, toPlaylist, toTrack } from "./normalize.js";
 export { looksLikeUuid, parsePlaylistUrl, parseUrl } from "./url.js";
 export type { ParsedUrl } from "./url.js";
+export { createProxy, isProxyPath, startProxy, DEFAULT_PORT } from "./serve.js";
+export type { ProxyOptions } from "./serve.js";
 export { THEMES, coverDataUri, formatDuration, renderCard } from "./card.js";
 export type { CardOptions, Theme, ThemeName } from "./card.js";
 export type * from "./types.js";

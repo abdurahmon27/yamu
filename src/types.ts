@@ -82,6 +82,13 @@ export interface ClientOptions {
   coverSize?: string;
   /** Language for titles Yandex localises, e.g. "en", "ru", "uz". Default "en". */
   lang?: string;
+  /**
+   * Where to send requests instead of `https://api.music.yandex.<tld>` —
+   * a `yamu serve` proxy running somewhere Yandex Music answers.
+   */
+  apiBase?: string;
+  /** Shared secret for a proxy started with `yamu serve --key`. */
+  apiKey?: string;
   timeoutMs?: number;
   /** Injected in tests. */
   fetchImpl?: typeof fetch;

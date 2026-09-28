@@ -6,13 +6,15 @@ import { dirname } from "node:path";
 import { YamuError } from "./api.js";
 import { coverDataUri, renderCard, THEMES } from "./card.js";
 import { collect } from "./fetch.js";
+import { DEFAULT_PORT, startProxy } from "./serve.js";
 import { looksLikeUuid, parsePlaylistUrl } from "./url.js";
 const HELP = `yamu — Yandex Music data for your portfolio
 
 Usage
-  yamu fetch --user <uid|login> [options]
+  yamu fetch --playlist <link> [options]
   yamu card  --in <data.json> --out <card.svg> [options]
   yamu url   <music.yandex link>
+  yamu serve [--port 8787] [--key <secret>] [--token <token>]
 
 fetch
   --playlist <url|uuid|kind>
@@ -25,6 +27,9 @@ fetch
   --limit <n>            Keep at most n tracks per section. Default 20.
   --tld <ru|uz|com|by|kz> Yandex Music domain. Default ru.
   --lang <code>          Language for localised titles. Default en.
+  --api-base <url>       A yamu proxy to fetch through, for machines Yandex
+                         Music does not serve (a GitHub runner, say).
+  --api-key <secret>     Key for a proxy started with --key.
   --token <token>        Yandex OAuth token. Only needed for private data.
   --out <file>           Where to write the JSON. Default yamu.json
   --card <file>          Also render an SVG card to this path.
@@ -41,11 +46,23 @@ card
   --width <px>           Card width. Default 460.
   --no-footer            Hide the "updated …" line.
 
+serve
+  Runs a read-only proxy of the few endpoints yamu reads. Start it on a machine
+  Yandex Music answers, then point --api-base at it from anywhere.
+
+  --port <n>             Port to listen on. Default 8787.
+  --key <secret>         Require this in the x-yamu-key header.
+  --token <token>        Yandex token used for every forwarded request. It
+                         stays on the proxy; callers never send one.
+  --tld <ru|uz|com|by|kz>
+
 Examples
   yamu fetch --user yamusic-top --playlist 1076 --tld uz --out public/music.json
   yamu fetch --playlist https://music.yandex.com/playlists/lk.1234abcd-… --card card.svg
   yamu fetch --playlist https://music.yandex.uz/users/me/playlists/1000 --card card.svg
   yamu card --in public/music.json --out public/music.svg --theme dark --limit 8
+  yamu serve --port 8787 --key "$YAMU_KEY"
+  yamu fetch --playlist <link> --api-base https://music-proxy.example.com --api-key "$YAMU_KEY"
 `;
 export function parseArgs(argv) {
     const [command = "help", ...rest] = argv;
@@ -141,6 +158,8 @@ async function runFetch(args) {
             tld,
             ...(stringFlag(args, "token") ? { token: stringFlag(args, "token") } : {}),
             ...(stringFlag(args, "lang") ? { lang: stringFlag(args, "lang") } : {}),
+            ...(stringFlag(args, "api-base") ? { apiBase: stringFlag(args, "api-base") } : {}),
+            ...(stringFlag(args, "api-key") ? { apiKey: stringFlag(args, "api-key") } : {}),
         });
         await writeOut(out, `${JSON.stringify(data, null, 2)}\n`);
         console.log(`yamu: wrote ${out}`);
@@ -209,11 +228,27 @@ function runUrl(args) {
     console.log(JSON.stringify(described, null, 2));
     return 0;
 }
+function runServe(args) {
+    const port = numberFlag(args, "port", DEFAULT_PORT);
+    startProxy({
+        port,
+        ...(stringFlag(args, "key") ? { key: stringFlag(args, "key") } : {}),
+        ...(stringFlag(args, "token") ? { token: stringFlag(args, "token") } : {}),
+        ...(stringFlag(args, "tld") ? { tld: stringFlag(args, "tld") } : {}),
+    });
+    console.log(`yamu: proxy listening on http://127.0.0.1:${port}`);
+    if (!stringFlag(args, "key")) {
+        console.warn("yamu: no --key set — anyone who can reach this port can use it");
+    }
+    return 0;
+}
 export async function main(argv) {
     const args = parseArgs(argv);
     switch (args.command) {
         case "fetch":
             return runFetch(args);
+        case "serve":
+            return runServe(args);
         case "card":
             return runCard(args);
         case "url":
