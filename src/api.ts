@@ -92,6 +92,14 @@ export function getPlaylist(
   return request(`/users/${encodeURIComponent(user)}/playlists/${encodeURIComponent(kind)}`, options);
 }
 
+/**
+ * A playlist by its uuid — the `lk.…` value in the links Yandex Music shares
+ * today. The response carries the owner, so nothing else is needed.
+ */
+export function getPlaylistByUuid(uuid: string, options?: ClientOptions): Promise<unknown> {
+  return request(`/playlist/${encodeURIComponent(uuid)}`, options);
+}
+
 /** Every playlist a user has made public. */
 export function getUserPlaylists(user: string, options?: ClientOptions): Promise<unknown> {
   return request(`/users/${encodeURIComponent(user)}/playlists/list`, options);

@@ -16,6 +16,11 @@ export declare function apiBase(tld?: Tld): string;
 export declare function siteBase(tld?: Tld): string;
 /** A playlist by owner (numeric uid or login) and kind — the number in its URL. */
 export declare function getPlaylist(user: string, kind: string, options?: ClientOptions): Promise<unknown>;
+/**
+ * A playlist by its uuid — the `lk.…` value in the links Yandex Music shares
+ * today. The response carries the owner, so nothing else is needed.
+ */
+export declare function getPlaylistByUuid(uuid: string, options?: ClientOptions): Promise<unknown>;
 /** Every playlist a user has made public. */
 export declare function getUserPlaylists(user: string, options?: ClientOptions): Promise<unknown>;
 /** Liked track ids. Visible only while the profile's music is public. */

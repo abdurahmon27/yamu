@@ -1,11 +1,16 @@
 /** The three things yamu can collect, assembled into one `YamuData` file. */
-import { DEFAULT_TLD, getLikedTrackIds, getPlaylist, getTracks, getUserPlaylists } from "./api.js";
+import { DEFAULT_TLD, getLikedTrackIds, getPlaylist, getPlaylistByUuid, getTracks, getUserPlaylists, } from "./api.js";
 import { DEFAULT_COVER_SIZE, likedTrackIds, toLikes, toPlaylist, toPlaylistSummaries, toTrack, } from "./normalize.js";
 /** Yandex accepts a few hundred ids per call; stay well under it. */
 const TRACK_BATCH = 100;
 export async function fetchPlaylist(user, kind, options = {}) {
     const tld = options.tld ?? DEFAULT_TLD;
     const raw = await getPlaylist(user, kind, options);
+    return toPlaylist(raw, tld, options.coverSize ?? DEFAULT_COVER_SIZE);
+}
+export async function fetchPlaylistByUuid(uuid, options = {}) {
+    const tld = options.tld ?? DEFAULT_TLD;
+    const raw = await getPlaylistByUuid(uuid, options);
     return toPlaylist(raw, tld, options.coverSize ?? DEFAULT_COVER_SIZE);
 }
 export async function fetchPlaylists(user, options = {}) {
@@ -47,14 +52,24 @@ export async function collect(options) {
         source: "yandex-music",
         tld,
     };
-    if (options.playlist) {
+    if (options.playlistUuid) {
+        const playlist = await fetchPlaylistByUuid(options.playlistUuid, options);
+        data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
+    }
+    else if (options.playlist) {
+        if (!options.user)
+            throw new Error("a playlist kind needs a user — pass one, or use a uuid");
         const playlist = await fetchPlaylist(options.user, options.playlist, options);
         data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
     }
     if (options.playlists) {
+        if (!options.user)
+            throw new Error("--playlists needs a user");
         data.playlists = await fetchPlaylists(options.user, options);
     }
     if (options.likes) {
+        if (!options.user)
+            throw new Error("--likes needs a user");
         data.likes = await fetchLikes(options.user, limit > 0 ? limit : 50, options);
     }
     return data;

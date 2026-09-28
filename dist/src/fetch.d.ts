@@ -1,6 +1,7 @@
 /** The three things yamu can collect, assembled into one `YamuData` file. */
 import type { ClientOptions, Likes, Playlist, PlaylistSummary, Track, YamuData } from "./types.js";
 export declare function fetchPlaylist(user: string, kind: string, options?: ClientOptions): Promise<Playlist>;
+export declare function fetchPlaylistByUuid(uuid: string, options?: ClientOptions): Promise<Playlist>;
 export declare function fetchPlaylists(user: string, options?: ClientOptions): Promise<PlaylistSummary[]>;
 export declare function fetchTracks(ids: string[], options?: ClientOptions): Promise<Track[]>;
 /**
@@ -9,9 +10,12 @@ export declare function fetchTracks(ids: string[], options?: ClientOptions): Pro
  */
 export declare function fetchLikes(user: string, limit: number, options?: ClientOptions): Promise<Likes>;
 export interface CollectOptions extends ClientOptions {
-    user: string;
-    /** Playlist kind — the number at the end of a playlist URL. */
+    /** Owner of the data. Optional when `playlistUuid` is given. */
+    user?: string;
+    /** Playlist kind — the number at the end of an older playlist URL. */
     playlist?: string;
+    /** Playlist uuid — the `lk.…` value in a current share link. */
+    playlistUuid?: string;
     /** Include the user's public playlist list. */
     playlists?: boolean;
     /** Include liked tracks. */

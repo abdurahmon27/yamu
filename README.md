@@ -49,6 +49,8 @@ jobs:
         with:
           # Both come straight out of a playlist link — see "Finding your
           # user and playlist" below.
+          # Or drop `user` entirely and pass a share link as `playlist`:
+          #   playlist: "https://music.yandex.com/playlists/lk.1234abcd-…"
           user: "your-yandex-login"
           playlist: "1000"
           tld: "uz"        # ru | uz | com | by | kz
@@ -99,11 +101,17 @@ class names and leaves the design to you. Or skip it entirely and map over
 
 ## Finding your user and playlist
 
-Both values are already in the link to any of your playlists:
+Everything yamu needs is in the link to any of your playlists. Yandex Music
+hands out two shapes, and both work:
 
 ```
+# what the share button gives you today — no user needed
+https://music.yandex.uz/playlists/ch.448df3eb-daee-408a-a60a-252259db2f3b
+       └── tld ──┘                 └──────────── playlist ─────────────┘
+
+# the older shape, still used in the address bar
 https://music.yandex.uz/users/your-login/playlists/1000
-       └── tld ──┘      └── user ──┘     └ playlist ┘
+       └── tld ─┘       └── user ──┘     └ playlist ┘
 ```
 
 To get that link:
@@ -114,13 +122,24 @@ To get that link:
 - **Mobile app** — open the playlist, then *Share → Copy link*
   (*Поделиться → Скопировать ссылку*).
 
-`user` is your Yandex login; some accounts show a numeric uid there instead.
-Either one works. `playlist` is the number at the end — and `3` is the special
-kind for **Liked tracks**, which you can also ask for with `--likes`.
+With a `lk.…` link there is nothing else to look up: it identifies the playlist
+on its own, and the owner comes back with the data. With the older shape,
+`user` is your Yandex login (some accounts show a numeric uid there instead —
+either works) and `playlist` is the number at the end, where `3` is the special
+kind for **Liked tracks**.
+
+`--likes` and `--playlists` always need a `user`, because they are about an
+account rather than one playlist.
 
 Rather not read URLs? Hand it to yamu:
 
 ```console
+$ npx github:abdurahmon27/yamu url "https://music.yandex.uz/playlists/ch.448df3eb-daee-408a-a60a-252259db2f3b"
+{
+  "playlist": "ch.448df3eb-daee-408a-a60a-252259db2f3b",
+  "tld": "uz"
+}
+
 $ npx github:abdurahmon27/yamu url "https://music.yandex.uz/users/yamusic-top/playlists/1076"
 {
   "user": "yamusic-top",
@@ -134,7 +153,7 @@ and `--tld` are read from it:
 
 ```bash
 npx github:abdurahmon27/yamu fetch \
-  --playlist "https://music.yandex.uz/users/yamusic-top/playlists/1076" \
+  --playlist "https://music.yandex.uz/playlists/ch.448df3eb-daee-408a-a60a-252259db2f3b" \
   --out music.json
 ```
 
@@ -152,8 +171,8 @@ yamu url   <music.yandex link>
 
 | Flag | Meaning |
 |---|---|
-| `--user <uid\|login>` | Whose data to read. |
-| `--playlist <kind\|url>` | Playlist to fetch — the number at the end of its URL. |
+| `--user <uid\|login>` | Whose data to read. Not needed when the playlist is a uuid. |
+| `--playlist <kind\|uuid\|url>` | The number at the end of an older URL, a `lk.…` uuid, or either playlist link. |
 | `--playlists` | Also include the user's public playlist list. |
 | `--likes` | Also include liked tracks (needs public music, or a token). |
 | `--limit <n>` | Tracks kept per section. Default 20. |

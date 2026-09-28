@@ -7,10 +7,10 @@ branding:
 
 inputs:
   user:
-    description: "Owner of the data — numeric uid or login."
-    required: true
+    description: "Owner of the data — numeric uid or login. Not needed when playlist is a uuid or a uuid link."
+    required: false
   playlist:
-    description: "Playlist kind (the number at the end of its URL) or a full playlist URL."
+    description: "Playlist kind (the number at the end of an older URL), a lk.… uuid, or either playlist link."
     required: false
   playlists:
     description: "Include the user's public playlist list."

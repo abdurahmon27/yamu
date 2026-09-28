@@ -69,6 +69,13 @@ async function request(endpoint, options = {}) {
 export function getPlaylist(user, kind, options) {
     return request(`/users/${encodeURIComponent(user)}/playlists/${encodeURIComponent(kind)}`, options);
 }
+/**
+ * A playlist by its uuid — the `lk.…` value in the links Yandex Music shares
+ * today. The response carries the owner, so nothing else is needed.
+ */
+export function getPlaylistByUuid(uuid, options) {
+    return request(`/playlist/${encodeURIComponent(uuid)}`, options);
+}
 /** Every playlist a user has made public. */
 export function getUserPlaylists(user, options) {
     return request(`/users/${encodeURIComponent(user)}/playlists/list`, options);

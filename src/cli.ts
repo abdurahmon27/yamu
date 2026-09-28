@@ -8,7 +8,7 @@ import { dirname } from "node:path";
 import { YamuError } from "./api.js";
 import { coverDataUri, renderCard, THEMES, type ThemeName } from "./card.js";
 import { collect } from "./fetch.js";
-import { parsePlaylistUrl } from "./url.js";
+import { looksLikeUuid, parsePlaylistUrl } from "./url.js";
 import type { Tld, YamuData } from "./types.js";
 
 const HELP = `yamu — Yandex Music data for your portfolio
@@ -19,8 +19,10 @@ Usage
   yamu url   <music.yandex link>
 
 fetch
-  --user <uid|login>     Owner of the data. Numeric uid or login.
-  --playlist <kind|url>  Playlist to fetch. The number at the end of its URL.
+  --user <uid|login>     Owner of the data. Not needed with a uuid playlist.
+  --playlist <kind|uuid|url>
+                         Playlist to fetch: the number at the end of an older
+                         URL, the lk.… uuid of a current one, or either link.
   --playlists            Include the user's public playlist list.
   --likes                Include liked tracks (profile music must be public).
   --limit <n>            Keep at most n tracks per section. Default 20.
@@ -44,6 +46,7 @@ card
 
 Examples
   yamu fetch --user yamusic-top --playlist 1076 --tld uz --out public/music.json
+  yamu fetch --playlist https://music.yandex.com/playlists/lk.1234abcd-… --card card.svg
   yamu fetch --playlist https://music.yandex.uz/users/me/playlists/1000 --card card.svg
   yamu card --in public/music.json --out public/music.svg --theme dark --limit 8
 `;
@@ -110,33 +113,44 @@ async function runFetch(args: Args): Promise<number> {
 
   let user = stringFlag(args, "user");
   let playlist = stringFlag(args, "playlist");
+  let playlistUuid: string | undefined;
   let tld = (stringFlag(args, "tld") ?? "ru") as Tld;
 
-  // A full playlist URL carries the user, the kind and the domain.
+  // A playlist link carries everything: the domain, and either the owner and
+  // the kind, or a uuid that stands on its own.
   if (playlist && playlist.includes("music.yandex")) {
     const parsed = parsePlaylistUrl(playlist);
     if (!parsed) {
       console.error("yamu: could not read that playlist URL");
       return 1;
     }
-    user = user ?? parsed.user;
-    playlist = parsed.playlistKind;
     if (!stringFlag(args, "tld")) tld = parsed.tld;
+    if (parsed.kind === "playlist-uuid") {
+      playlistUuid = parsed.uuid;
+      playlist = undefined;
+    } else {
+      user = user ?? parsed.user;
+      playlist = parsed.playlistKind;
+    }
+  } else if (playlist && looksLikeUuid(playlist)) {
+    playlistUuid = playlist;
+    playlist = undefined;
   }
 
-  if (!user) {
+  if (!user && !playlistUuid) {
     console.error("yamu: --user is required (a numeric uid or a login)");
     return 1;
   }
-  if (!playlist && !boolFlag(args, "likes") && !boolFlag(args, "playlists")) {
+  if (!playlist && !playlistUuid && !boolFlag(args, "likes") && !boolFlag(args, "playlists")) {
     console.error("yamu: nothing to fetch — pass --playlist, --likes or --playlists");
     return 1;
   }
 
   try {
     const data = await collect({
-      user,
+      ...(user ? { user } : {}),
       ...(playlist ? { playlist } : {}),
+      ...(playlistUuid ? { playlistUuid } : {}),
       playlists: boolFlag(args, "playlists"),
       likes: boolFlag(args, "likes"),
       limit: numberFlag(args, "limit", 20),
@@ -211,7 +225,11 @@ function runUrl(args: Args): number {
     console.error("yamu: that is not a playlist link");
     return 1;
   }
-  console.log(JSON.stringify({ user: parsed.user, playlist: parsed.playlistKind, tld: parsed.tld }, null, 2));
+  const described =
+    parsed.kind === "playlist-uuid"
+      ? { playlist: parsed.uuid, tld: parsed.tld }
+      : { user: parsed.user, playlist: parsed.playlistKind, tld: parsed.tld };
+  console.log(JSON.stringify(described, null, 2));
   return 0;
 }
 

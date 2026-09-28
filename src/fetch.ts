@@ -1,6 +1,13 @@
 /** The three things yamu can collect, assembled into one `YamuData` file. */
 
-import { DEFAULT_TLD, getLikedTrackIds, getPlaylist, getTracks, getUserPlaylists } from "./api.js";
+import {
+  DEFAULT_TLD,
+  getLikedTrackIds,
+  getPlaylist,
+  getPlaylistByUuid,
+  getTracks,
+  getUserPlaylists,
+} from "./api.js";
 import {
   DEFAULT_COVER_SIZE,
   likedTrackIds,
@@ -21,6 +28,15 @@ export async function fetchPlaylist(
 ): Promise<Playlist> {
   const tld = options.tld ?? DEFAULT_TLD;
   const raw = await getPlaylist(user, kind, options);
+  return toPlaylist(raw, tld, options.coverSize ?? DEFAULT_COVER_SIZE);
+}
+
+export async function fetchPlaylistByUuid(
+  uuid: string,
+  options: ClientOptions = {}
+): Promise<Playlist> {
+  const tld = options.tld ?? DEFAULT_TLD;
+  const raw = await getPlaylistByUuid(uuid, options);
   return toPlaylist(raw, tld, options.coverSize ?? DEFAULT_COVER_SIZE);
 }
 
@@ -69,9 +85,12 @@ export async function fetchLikes(
 }
 
 export interface CollectOptions extends ClientOptions {
-  user: string;
-  /** Playlist kind — the number at the end of a playlist URL. */
+  /** Owner of the data. Optional when `playlistUuid` is given. */
+  user?: string;
+  /** Playlist kind — the number at the end of an older playlist URL. */
   playlist?: string;
+  /** Playlist uuid — the `lk.…` value in a current share link. */
+  playlistUuid?: string;
   /** Include the user's public playlist list. */
   playlists?: boolean;
   /** Include liked tracks. */
@@ -89,14 +108,20 @@ export async function collect(options: CollectOptions): Promise<YamuData> {
     tld,
   };
 
-  if (options.playlist) {
+  if (options.playlistUuid) {
+    const playlist = await fetchPlaylistByUuid(options.playlistUuid, options);
+    data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
+  } else if (options.playlist) {
+    if (!options.user) throw new Error("a playlist kind needs a user — pass one, or use a uuid");
     const playlist = await fetchPlaylist(options.user, options.playlist, options);
     data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
   }
   if (options.playlists) {
+    if (!options.user) throw new Error("--playlists needs a user");
     data.playlists = await fetchPlaylists(options.user, options);
   }
   if (options.likes) {
+    if (!options.user) throw new Error("--likes needs a user");
     data.likes = await fetchLikes(options.user, limit > 0 ? limit : 50, options);
   }
   return data;
