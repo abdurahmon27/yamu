@@ -1,0 +1,70 @@
+{
+  "name": "yamu",
+  "version": "0.1.0",
+  "description": "Put your Yandex Music playlist, likes or recent tracks on your portfolio — fetched at build time, rendered as static JSON, SVG or React.",
+  "keywords": [
+    "yandex-music",
+    "playlist",
+    "readme",
+    "portfolio",
+    "svg",
+    "github-action",
+    "static"
+  ],
+  "license": "MIT",
+  "author": "Abdurahmon Mamadiyorov (https://github.com/abdurahmon27)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdurahmon27/yamu.git"
+  },
+  "homepage": "https://github.com/abdurahmon27/yamu#readme",
+  "bugs": {
+    "url": "https://github.com/abdurahmon27/yamu/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "yamu": "dist/src/cli.js"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./card": {
+      "types": "./dist/src/card.d.ts",
+      "import": "./dist/src/card.js"
+    },
+    "./react": {
+      "types": "./dist/src/react/index.d.ts",
+      "import": "./dist/src/react/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/test/*.test.js\"",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}

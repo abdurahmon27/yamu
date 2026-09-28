@@ -1,0 +1,39 @@
+# Keep a JSON file in your site repository and render it however you like.
+#
+# The workflow commits the file; your usual deploy (Vercel, Netlify, Pages)
+# picks the commit up and rebuilds. Nothing is fetched at runtime, so your site
+# does not depend on Yandex being reachable when a visitor arrives.
+
+name: music
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # once a day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: abdurahmon27/yamu@v1
+        with:
+          user: "${{ vars.YANDEX_USER }}"
+          playlist: "${{ vars.YANDEX_PLAYLIST }}"
+          likes: "true"
+          limit: "20"
+          out: "public/music.json"
+          # Only needed if the data is private. Public playlists need no token.
+          token: "${{ secrets.YANDEX_MUSIC_TOKEN }}"
+
+      - name: commit if something changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/music.json
+          git diff --staged --quiet || git commit -m "chore: refresh music"
+          git push

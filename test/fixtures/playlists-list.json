@@ -1,0 +1,46 @@
+{
+  "result": [
+    {
+      "uid": 414787002,
+      "kind": 1052,
+      "title": "Индастриал: лучшее",
+      "trackCount": 99,
+      "modified": "2026-09-27T11:36:36+00:00",
+      "cover": {
+        "type": "pic",
+        "dir": "/get-music-user-playlist/11407514/soe685rAqUCMAn/",
+        "version": "1734024967329",
+        "uri": "avatars.yandex.net/get-music-user-playlist/11407514/soe685rAqUCMAn/%%?1734024967329",
+        "custom": true
+      },
+      "owner": {
+        "uid": 414787002,
+        "login": "yamusic-top",
+        "name": "Яндекс Музыка",
+        "sex": "male",
+        "verified": true
+      }
+    },
+    {
+      "uid": 414787002,
+      "kind": 1053,
+      "title": "Прогрессивный рок: лучшее",
+      "trackCount": 97,
+      "modified": "2026-09-27T11:36:36+00:00",
+      "cover": {
+        "type": "pic",
+        "dir": "/get-music-user-playlist/11407514/soe6964jBMnI7A/",
+        "version": "1734025004214",
+        "uri": "avatars.yandex.net/get-music-user-playlist/11407514/soe6964jBMnI7A/%%?1734025004214",
+        "custom": true
+      },
+      "owner": {
+        "uid": 414787002,
+        "login": "yamusic-top",
+        "name": "Яндекс Музыка",
+        "sex": "male",
+        "verified": true
+      }
+    }
+  ]
+}

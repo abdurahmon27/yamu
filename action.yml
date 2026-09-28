@@ -1,0 +1,73 @@
+name: "yamu"
+description: "Fetch a Yandex Music playlist, likes or playlist list into a static JSON (and an SVG card) for your site or profile README."
+author: "abdurahmon27"
+branding:
+  icon: "music"
+  color: "orange"
+
+inputs:
+  user:
+    description: "Owner of the data — numeric uid or login."
+    required: true
+  playlist:
+    description: "Playlist kind (the number at the end of its URL) or a full playlist URL."
+    required: false
+  playlists:
+    description: "Include the user's public playlist list."
+    required: false
+    default: "false"
+  likes:
+    description: "Include liked tracks. The profile's music must be public, or a token supplied."
+    required: false
+    default: "false"
+  limit:
+    description: "Maximum tracks kept per section."
+    required: false
+    default: "20"
+  tld:
+    description: "Yandex Music domain: ru, uz, com, by or kz."
+    required: false
+    default: "ru"
+  lang:
+    description: "Language for titles Yandex localises: en, ru, uz…"
+    required: false
+    default: "en"
+  token:
+    description: "Yandex OAuth token. Only needed for private data — pass it from a secret, never inline."
+    required: false
+  out:
+    description: "Path of the JSON file to write."
+    required: false
+    default: "yamu.json"
+  card:
+    description: "Optional path for an SVG card."
+    required: false
+  theme:
+    description: "Card theme: gruvbox, dark, light or nord."
+    required: false
+    default: "gruvbox"
+  title:
+    description: "Override the card heading."
+    required: false
+  width:
+    description: "Card width in pixels."
+    required: false
+    default: "460"
+  cover:
+    description: "Embed the playlist cover in the card."
+    required: false
+    default: "false"
+  soft-fail:
+    description: "Keep the existing files and pass the step when the fetch fails."
+    required: false
+    default: "true"
+
+outputs:
+  json:
+    description: "Path of the JSON that was written."
+  card:
+    description: "Path of the SVG card, when one was requested."
+
+runs:
+  using: "node20"
+  main: "dist/src/action.js"

@@ -1,0 +1,45 @@
+# Put a Yandex Music card in your GitHub profile README.
+#
+# 1. Copy this file to .github/workflows/music.yml in your profile repository
+#    (the one named after your username).
+# 2. Change `user` and `playlist` — `yamu url <playlist link>` prints both.
+# 3. Add the image to your README:
+#
+#        ![music](./music.svg)
+#
+# No token needed for a public playlist.
+
+name: music
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every six hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: abdurahmon27/yamu@v1
+        with:
+          user: "yamusic-top"
+          playlist: "1076"
+          tld: "uz"
+          limit: "6"
+          out: "music.json"
+          card: "music.svg"
+          theme: "gruvbox"
+          cover: "true"
+
+      - name: commit if something changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add music.json music.svg
+          git diff --staged --quiet || git commit -m "chore: refresh music"
+          git push

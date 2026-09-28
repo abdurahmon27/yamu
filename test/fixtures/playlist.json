@@ -1,0 +1,102 @@
+{
+  "result": {
+    "owner": {
+      "uid": 414787002,
+      "login": "yamusic-top",
+      "name": "Яндекс Музыка",
+      "sex": "male",
+      "verified": true
+    },
+    "available": true,
+    "uid": 414787002,
+    "kind": 1076,
+    "title": "Чарт Яндекс Музыки 🇺🇿",
+    "revision": 0,
+    "trackCount": 100,
+    "created": "2026-09-28T08:38:04+00:00",
+    "modified": "2026-09-28T08:38:04+00:00",
+    "durationMs": 19933150,
+    "cover": {
+      "type": "pic",
+      "dir": "/get-music-user-playlist/10311229/chart-UZBEKISTAN-RU-bjIC/",
+      "version": "1705042568026",
+      "uri": "avatars.yandex.net/get-music-user-playlist/10311229/chart-UZBEKISTAN-RU-bjIC/%%?1705042568026",
+      "custom": true
+    },
+    "tracks": [
+      {
+        "id": 79071659,
+        "timestamp": "2026-06-29T02:33:53+00:00",
+        "track": {
+          "id": "79071659",
+          "title": "Лампочки",
+          "available": true,
+          "durationMs": 195780,
+          "artists": [
+            {
+              "id": 666984,
+              "name": "ARTIK & ASTI"
+            }
+          ],
+          "albums": [
+            {
+              "id": 16969949,
+              "title": "Миллениум X"
+            }
+          ],
+          "coverUri": "avatars.yandex.net/get-music-content/5282321/917eff67.a.16969949-1/%%"
+        }
+      },
+      {
+        "id": 154651895,
+        "timestamp": "2026-08-15T09:11:49+00:00",
+        "track": {
+          "id": "154651895",
+          "title": "PESHTA",
+          "available": true,
+          "durationMs": 177540,
+          "artists": [
+            {
+              "id": 6144118,
+              "name": "Хамдам Собиров"
+            }
+          ],
+          "albums": [
+            {
+              "id": 43484020,
+              "title": "PESHTA"
+            }
+          ],
+          "coverUri": "avatars.yandex.net/get-music-content/17674835/84e8948a.a.43484020-1/%%"
+        }
+      },
+      {
+        "id": 153528983,
+        "timestamp": "2026-07-14T16:45:10+00:00",
+        "track": {
+          "id": "153528983",
+          "title": "Xatlar",
+          "available": true,
+          "durationMs": 261450,
+          "artists": [
+            {
+              "id": 3153222,
+              "name": "Shohruhxon"
+            },
+            {
+              "id": 5775899,
+              "name": "Umidaxon"
+            }
+          ],
+          "albums": [
+            {
+              "id": 43012345,
+              "title": "Xatlar"
+            }
+          ],
+          "coverUri": "avatars.yandex.net/get-music-content/17655650/8949a11b.a.43012345-1/%%"
+        }
+      }
+    ]
+  }
+}

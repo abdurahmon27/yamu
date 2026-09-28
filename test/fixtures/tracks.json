@@ -1,0 +1,40 @@
+{
+  "result": [
+    {
+      "id": "79071659",
+      "title": "Лампочки",
+      "durationMs": 195780,
+      "coverUri": "avatars.yandex.net/get-music-content/5282321/917eff67.a.16969949-1/%%",
+      "artists": [
+        {
+          "id": 666984,
+          "name": "ARTIK & ASTI"
+        }
+      ],
+      "albums": [
+        {
+          "id": 16969949,
+          "title": "Миллениум X"
+        }
+      ]
+    },
+    {
+      "id": "154651895",
+      "title": "PESHTA",
+      "durationMs": 177540,
+      "coverUri": "avatars.yandex.net/get-music-content/17674835/84e8948a.a.43484020-1/%%",
+      "artists": [
+        {
+          "id": 6144118,
+          "name": "Хамдам Собиров"
+        }
+      ],
+      "albums": [
+        {
+          "id": 43484020,
+          "title": "PESHTA"
+        }
+      ]
+    }
+  ]
+}
