@@ -47,7 +47,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: abdurahmon27/yamu@v1
         with:
-          user: "your-login-or-uid"
+          # Both come straight out of a playlist link — see "Finding your
+          # user and playlist" below.
+          user: "your-yandex-login"
           playlist: "1000"
           tld: "uz"        # ru | uz | com | by | kz
           card: "music.svg"
@@ -97,10 +99,29 @@ class names and leaves the design to you. Or skip it entirely and map over
 
 ## Finding your user and playlist
 
-Open the playlist on Yandex Music, copy the link, and ask yamu:
+Both values are already in the link to any of your playlists:
+
+```
+https://music.yandex.uz/users/your-login/playlists/1000
+       └── tld ──┘      └── user ──┘     └ playlist ┘
+```
+
+To get that link:
+
+- **Web** — open [music.yandex.com](https://music.yandex.com), go to *My
+  music → Playlists* (*Моя музыка → Плейлисты*) and click the playlist. The
+  address bar has it.
+- **Mobile app** — open the playlist, then *Share → Copy link*
+  (*Поделиться → Скопировать ссылку*).
+
+`user` is your Yandex login; some accounts show a numeric uid there instead.
+Either one works. `playlist` is the number at the end — and `3` is the special
+kind for **Liked tracks**, which you can also ask for with `--likes`.
+
+Rather not read URLs? Hand it to yamu:
 
 ```console
-$ npx github:abdurahmon27/yamu url https://music.yandex.uz/users/yamusic-top/playlists/1076
+$ npx github:abdurahmon27/yamu url "https://music.yandex.uz/users/yamusic-top/playlists/1076"
 {
   "user": "yamusic-top",
   "playlist": "1076",
@@ -108,8 +129,18 @@ $ npx github:abdurahmon27/yamu url https://music.yandex.uz/users/yamusic-top/pla
 }
 ```
 
-`playlist: 3` is the special kind for **Liked tracks**. You can also pass the
-whole URL to `--playlist` and skip `--user` and `--tld`.
+Or skip the step entirely — pass the whole link as `--playlist` and `--user`
+and `--tld` are read from it:
+
+```bash
+npx github:abdurahmon27/yamu fetch \
+  --playlist "https://music.yandex.uz/users/yamusic-top/playlists/1076" \
+  --out music.json
+```
+
+**The playlist has to be public** for the tokenless path: on Yandex Music open
+the playlist and make sure it is not marked private. A private one needs a
+token — see [Tokens](#tokens-and-when-you-do-not-need-one).
 
 ## CLI
 

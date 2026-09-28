@@ -1,5 +1,9 @@
 # Keep a JSON file in your site repository and render it however you like.
 #
+# YANDEX_USER and YANDEX_PLAYLIST come from a playlist link:
+#   https://music.yandex.uz/users/<user>/playlists/<playlist>
+# Set them under Settings -> Secrets and variables -> Actions -> Variables.
+#
 # The workflow commits the file; your usual deploy (Vercel, Netlify, Pages)
 # picks the commit up and rebuilds. Nothing is fetched at runtime, so your site
 # does not depend on Yandex being reachable when a visitor arrives.
