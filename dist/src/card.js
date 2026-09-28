@@ -38,6 +38,16 @@ export const THEMES = {
         muted: "#7b8494",
         accent: "#a3be8c",
     },
+    // Matches the palette the popular README stat cards use, so a yamu card can
+    // sit next to them without a seam.
+    tokyonight: {
+        background: "#1a1b27",
+        border: "#2f3350",
+        title: "#70a5fd",
+        text: "#a9b1d6",
+        muted: "#6b7394",
+        accent: "#bf91f3",
+    },
 };
 const FONT = "ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 const MONO = "ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, monospace";

@@ -52,7 +52,7 @@ jobs:
           # login to look up and nothing to authenticate.
           playlist: "https://music.yandex.com/playlists/lk.1234abcd-5678-…"
           card: "music.svg"
-          theme: "gruvbox" # gruvbox | dark | light | nord
+          theme: "gruvbox" # gruvbox | dark | light | nord | tokyonight
           cover: "true"
       - run: |
           git config user.name "github-actions[bot]"
@@ -190,7 +190,7 @@ yamu url   <music.yandex link>
 | `--token <token>` | Only for private data. Prefer a secret over typing it. |
 | `--out <file>` | JSON destination. Default `yamu.json`. |
 | `--card <file>` | Also render an SVG card. |
-| `--theme <name>` | `gruvbox`, `dark`, `light`, `nord`. |
+| `--theme <name>` | `gruvbox`, `dark`, `light`, `nord`, `tokyonight`. |
 | `--cover` | Embed the playlist cover in the card. |
 | `--width <px>` | Card width. Default 460. |
 | `--title <text>` | Override the card heading. |

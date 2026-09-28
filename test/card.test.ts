@@ -41,6 +41,13 @@ test("themes change the colours, not the markup", () => {
   assert.equal(gruvbox.split("\n").length, light.split("\n").length);
 });
 
+test("tokyonight matches the palette of the common README cards", () => {
+  const svg = renderCard(data(), { theme: "tokyonight", limit: 1 });
+
+  assert.ok(svg.includes("#1a1b27"), "background");
+  assert.ok(svg.includes("#70a5fd"), "title");
+});
+
 test("escapes anything that would break the xml", () => {
   const withMarkup: YamuData = {
     ...data(),

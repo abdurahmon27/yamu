@@ -8,7 +8,7 @@
 
 import type { Playlist, Track, YamuData } from "./types.js";
 
-export type ThemeName = "gruvbox" | "dark" | "light" | "nord";
+export type ThemeName = "gruvbox" | "dark" | "light" | "nord" | "tokyonight";
 
 export interface Theme {
   background: string;
@@ -51,6 +51,16 @@ export const THEMES: Record<ThemeName, Theme> = {
     text: "#eceff4",
     muted: "#7b8494",
     accent: "#a3be8c",
+  },
+  // Matches the palette the popular README stat cards use, so a yamu card can
+  // sit next to them without a seam.
+  tokyonight: {
+    background: "#1a1b27",
+    border: "#2f3350",
+    title: "#70a5fd",
+    text: "#a9b1d6",
+    muted: "#6b7394",
+    accent: "#bf91f3",
   },
 };
 

@@ -43,7 +43,7 @@ inputs:
     description: "Optional path for an SVG card."
     required: false
   theme:
-    description: "Card theme: gruvbox, dark, light or nord."
+    description: "Card theme: gruvbox, dark, light, nord or tokyonight. tokyonight matches the common README stat cards."
     required: false
     default: "gruvbox"
   title:

@@ -6,7 +6,7 @@
  * an optional cover embedded as a data URI.
  */
 import type { YamuData } from "./types.js";
-export type ThemeName = "gruvbox" | "dark" | "light" | "nord";
+export type ThemeName = "gruvbox" | "dark" | "light" | "nord" | "tokyonight";
 export interface Theme {
     background: string;
     border: string;

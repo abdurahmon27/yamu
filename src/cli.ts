@@ -32,14 +32,14 @@ fetch
   --token <token>        Yandex OAuth token. Only needed for private data.
   --out <file>           Where to write the JSON. Default yamu.json
   --card <file>          Also render an SVG card to this path.
-  --theme <name>         gruvbox | dark | light | nord. Default gruvbox.
+  --theme <name>         gruvbox | dark | light | nord | tokyonight.
   --cover                Embed the playlist cover in the card.
   --soft-fail            On a failed fetch, keep the existing files and exit 0.
 
 card
   --in <file>            JSON written by yamu fetch.
   --out <file>           SVG destination.
-  --theme <name>         gruvbox | dark | light | nord.
+  --theme <name>         gruvbox | dark | light | nord | tokyonight.
   --limit <n>            Tracks to draw. Default 5.
   --title <text>         Override the heading.
   --width <px>           Card width. Default 460.
