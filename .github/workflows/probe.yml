@@ -1,0 +1,20 @@
+name: probe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: where is this runner
+        run: curl -s --max-time 10 https://ipinfo.io/json || true
+      - name: which yandex hosts answer
+        run: |
+          uuid="ch.448df3eb-daee-408a-a60a-252259db2f3b"
+          for host in api.music.yandex.ru api.music.yandex.uz api.music.yandex.com api.music.yandex.by api.music.yandex.kz; do
+            for path in "/playlist/$uuid" "/users/yamusic-top/playlists/1076"; do
+              code=$(curl -s -o /tmp/body -w "%{http_code}" --max-time 12 "https://$host$path")
+              echo "$host$path -> $code $(head -c 120 /tmp/body | tr -d '\n')"
+            done
+          done
