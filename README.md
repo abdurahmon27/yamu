@@ -47,13 +47,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: abdurahmon27/yamu@v1
         with:
-          # Both come straight out of a playlist link — see "Finding your
-          # user and playlist" below.
-          # Or drop `user` entirely and pass a share link as `playlist`:
-          #   playlist: "https://music.yandex.com/playlists/lk.1234abcd-…"
-          user: "your-yandex-login"
-          playlist: "1000"
-          tld: "uz"        # ru | uz | com | by | kz
+          # Paste the link the share button gives you. That is the whole setup:
+          # a uuid link identifies the playlist on its own, so there is no
+          # login to look up and nothing to authenticate.
+          playlist: "https://music.yandex.com/playlists/lk.1234abcd-5678-…"
           card: "music.svg"
           theme: "gruvbox" # gruvbox | dark | light | nord
           cover: "true"
@@ -69,6 +66,17 @@ Then in your `README.md`:
 
 ```md
 ![music](./music.svg)
+```
+
+If your link is the older `/users/<login>/playlists/<kind>` shape, pass both
+parts instead — `kind` is only a number inside one account, so it needs an
+owner to mean anything:
+
+```yaml
+        with:
+          user: "your-yandex-login"  # public, it is the name in the URL
+          playlist: "1000"
+          tld: "uz"                  # ru | uz | com | by | kz
 ```
 
 Full copies of this and a site-oriented version live in [`examples/`](./examples).
@@ -130,6 +138,11 @@ kind for **Liked tracks**.
 
 `--likes` and `--playlists` always need a `user`, because they are about an
 account rather than one playlist.
+
+To be clear about what `user` is: a **public identifier**, the same string that
+sits in the playlist URL for anyone to read. It is not a credential, and yamu
+never asks for a password — the only secret it can take is an optional token
+for private data, which stays in your own repository.
 
 Rather not read URLs? Hand it to yamu:
 

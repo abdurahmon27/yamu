@@ -2,12 +2,13 @@
 #
 # 1. Copy this file to .github/workflows/music.yml in your profile repository
 #    (the one named after your username).
-# 2. Change `user` and `playlist` — `yamu url <playlist link>` prints both.
+# 2. Put your own playlist link in `playlist` below. The link the share button
+#    gives you carries everything — no login, no token, nothing to look up.
+#    The older /users/<login>/playlists/<kind> shape works too, but then you
+#    also need `user`, because the kind is only a number inside one account.
 # 3. Add the image to your README:
 #
 #        ![music](./music.svg)
-#
-# No token needed for a public playlist.
 
 name: music
 
@@ -27,9 +28,7 @@ jobs:
 
       - uses: abdurahmon27/yamu@v1
         with:
-          user: "yamusic-top"
-          playlist: "1076"
-          tld: "uz"
+          playlist: "https://music.yandex.uz/playlists/ch.448df3eb-daee-408a-a60a-252259db2f3b"
           limit: "6"
           out: "music.json"
           card: "music.svg"
