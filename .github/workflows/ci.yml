@@ -18,7 +18,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm ci
       - run: npm run build
-      - run: node --test "dist/test/*.test.js"
+      # Unquoted on purpose: the shell expands it, so Node 20 works too.
+      - run: node --test dist/test/*.test.js
 
   dist-is-current:
     # The action runs straight from dist/, so a stale build would ship a bug
