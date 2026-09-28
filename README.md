@@ -68,17 +68,6 @@ Then in your `README.md`:
 ![music](./music.svg)
 ```
 
-If your link is the older `/users/<login>/playlists/<kind>` shape, pass both
-parts instead — `kind` is only a number inside one account, so it needs an
-owner to mean anything:
-
-```yaml
-        with:
-          user: "your-yandex-login"  # public, it is the name in the URL
-          playlist: "1000"
-          tld: "uz"                  # ru | uz | com | by | kz
-```
-
 Full copies of this and a site-oriented version live in [`examples/`](./examples).
 
 ## Quick start — a portfolio site
@@ -87,9 +76,7 @@ Fetch into your repo, then render the JSON with your own components:
 
 ```bash
 npx github:abdurahmon27/yamu fetch \
-  --user your-login \
-  --playlist 1000 \
-  --tld uz \
+  --playlist "https://music.yandex.com/playlists/lk.1234abcd-5678-…" \
   --limit 20 \
   --out public/music.json
 ```
@@ -130,19 +117,28 @@ To get that link:
 - **Mobile app** — open the playlist, then *Share → Copy link*
   (*Поделиться → Скопировать ссылку*).
 
-With a `lk.…` link there is nothing else to look up: it identifies the playlist
-on its own, and the owner comes back with the data. With the older shape,
-`user` is your Yandex login (some accounts show a numeric uid there instead —
-either works) and `playlist` is the number at the end, where `3` is the special
-kind for **Liked tracks**.
+<details>
+<summary>Older links, and when <code>user</code> is still needed</summary>
 
-`--likes` and `--playlists` always need a `user`, because they are about an
-account rather than one playlist.
+Links of the shape `music.yandex.uz/users/<login>/playlists/<kind>` still work,
+but they need both halves, because `kind` is only a number **inside** one
+account — `3` is "Liked tracks" for everyone, so on its own it identifies
+nothing:
 
-To be clear about what `user` is: a **public identifier**, the same string that
-sits in the playlist URL for anyone to read. It is not a credential, and yamu
-never asks for a password — the only secret it can take is an optional token
-for private data, which stays in your own repository.
+```yaml
+user: "your-login"   # public: the name in the URL, not a credential
+playlist: "3"
+tld: "uz"
+```
+
+The only other time `user` matters is asking for `--likes` or `--playlists`
+**without** passing a playlist link, since those are about an account rather
+than one playlist.
+
+yamu never asks for a password. The only secret it can take is an optional
+token for private data, and that stays in your own repository.
+
+</details>
 
 Rather not read URLs? Hand it to yamu:
 
@@ -184,8 +180,8 @@ yamu url   <music.yandex link>
 
 | Flag | Meaning |
 |---|---|
-| `--user <uid\|login>` | Whose data to read. Not needed when the playlist is a uuid. |
-| `--playlist <kind\|uuid\|url>` | The number at the end of an older URL, a `lk.…` uuid, or either playlist link. |
+| `--playlist <url\|uuid\|kind>` | The playlist link Yandex Music gives you. A uuid link carries its owner, so nothing else is needed. |
+| `--user <uid\|login>` | Only for `--likes` / `--playlists` without a link, or an old-style kind. |
 | `--playlists` | Also include the user's public playlist list. |
 | `--likes` | Also include liked tracks (needs public music, or a token). |
 | `--limit <n>` | Tracks kept per section. Default 20. |

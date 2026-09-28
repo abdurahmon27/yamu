@@ -6,11 +6,11 @@ branding:
   color: "orange"
 
 inputs:
-  user:
-    description: "Owner of the data — numeric uid or login. Not needed when playlist is a uuid or a uuid link."
-    required: false
   playlist:
-    description: "Playlist kind (the number at the end of an older URL), a lk.… uuid, or either playlist link."
+    description: "The playlist link Yandex Music gives you. A uuid link carries its owner, so nothing else is needed. A bare uuid or an old-style kind also work."
+    required: false
+  user:
+    description: "Numeric uid or login. Only needed for likes/playlists without a playlist link, or with an old-style kind."
     required: false
   playlists:
     description: "Include the user's public playlist list."

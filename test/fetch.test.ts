@@ -32,3 +32,32 @@ test("likes are hydrated from ids", async () => {
   assert.match(stub.calls[0]!.url, /\/users\/me\/likes\/tracks$/);
   assert.match(stub.calls[1]!.url, /\/tracks\?track-ids=79071659,154651895$/);
 });
+
+test("a uuid playlist supplies the owner for likes", async () => {
+  const stub = stubFetch([
+    { body: fixture("playlist") },
+    { body: fixture("likes") },
+    { body: fixture("tracks") },
+  ]);
+
+  const data = await collect({
+    playlistUuid: "lk.1234abcd-5678-4abc-9def-1234567890ab",
+    likes: true,
+    limit: 2,
+    fetchImpl: stub.fetch,
+  });
+
+  assert.equal(data.playlist?.owner?.uid, "414787002");
+  assert.equal(data.likes?.tracks.length, 2);
+  assert.match(stub.calls[0]!.url, /\/playlist\/lk\./);
+  assert.match(stub.calls[1]!.url, /\/users\/414787002\/likes\/tracks$/, "owner came from the playlist");
+});
+
+test("without a user or a uuid, likes says so instead of guessing", async () => {
+  const stub = stubFetch([{ body: fixture("likes") }]);
+
+  await assert.rejects(
+    () => collect({ likes: true, fetchImpl: stub.fetch }),
+    /needs a user/
+  );
+});

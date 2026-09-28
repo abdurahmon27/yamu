@@ -1,8 +1,8 @@
 # Keep a JSON file in your site repository and render it however you like.
 #
-# YANDEX_USER and YANDEX_PLAYLIST come from a playlist link:
-#   https://music.yandex.uz/users/<user>/playlists/<playlist>
-# Set them under Settings -> Secrets and variables -> Actions -> Variables.
+# YANDEX_PLAYLIST is simply the playlist link Yandex Music gives you; set it
+# under Settings -> Secrets and variables -> Actions -> Variables. The link
+# carries its owner, so `likes` works off it too, with no login anywhere.
 #
 # The workflow commits the file; your usual deploy (Vercel, Netlify, Pages)
 # picks the commit up and rebuilds. Nothing is fetched at runtime, so your site
@@ -26,7 +26,6 @@ jobs:
 
       - uses: abdurahmon27/yamu@v1
         with:
-          user: "${{ vars.YANDEX_USER }}"
           playlist: "${{ vars.YANDEX_PLAYLIST }}"
           likes: "true"
           limit: "20"

@@ -15,10 +15,11 @@ Usage
   yamu url   <music.yandex link>
 
 fetch
-  --user <uid|login>     Owner of the data. Not needed with a uuid playlist.
-  --playlist <kind|uuid|url>
-                         Playlist to fetch: the number at the end of an older
-                         URL, the lk.… uuid of a current one, or either link.
+  --playlist <url|uuid|kind>
+                         The playlist link Yandex Music gives you. A uuid link
+                         carries the owner, so nothing else is needed.
+  --user <uid|login>     Only for --likes / --playlists without a playlist
+                         link, or for an old-style numeric kind.
   --playlists            Include the user's public playlist list.
   --likes                Include liked tracks (profile music must be public).
   --limit <n>            Keep at most n tracks per section. Default 20.
@@ -121,8 +122,8 @@ async function runFetch(args) {
         playlistUuid = playlist;
         playlist = undefined;
     }
-    if (!user && !playlistUuid) {
-        console.error("yamu: --user is required (a numeric uid or a login)");
+    if (!user && !playlistUuid && !playlist) {
+        console.error("yamu: pass a playlist link, or --user with what you want");
         return 1;
     }
     if (!playlist && !playlistUuid && !boolFlag(args, "likes") && !boolFlag(args, "playlists")) {

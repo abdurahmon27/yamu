@@ -108,21 +108,26 @@ export async function collect(options: CollectOptions): Promise<YamuData> {
     tld,
   };
 
+  let user = options.user;
+
   if (options.playlistUuid) {
     const playlist = await fetchPlaylistByUuid(options.playlistUuid, options);
     data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
+    // A uuid playlist comes back with its owner, so likes and the playlist
+    // list can be collected from the same single link.
+    user = user ?? playlist.owner?.uid;
   } else if (options.playlist) {
-    if (!options.user) throw new Error("a playlist kind needs a user — pass one, or use a uuid");
-    const playlist = await fetchPlaylist(options.user, options.playlist, options);
+    if (!user) throw new Error("a playlist kind needs a user — pass one, or use a playlist link");
+    const playlist = await fetchPlaylist(user, options.playlist, options);
     data.playlist = limit > 0 ? { ...playlist, tracks: playlist.tracks.slice(0, limit) } : playlist;
   }
   if (options.playlists) {
-    if (!options.user) throw new Error("--playlists needs a user");
-    data.playlists = await fetchPlaylists(options.user, options);
+    if (!user) throw new Error("playlists needs a user, or a playlist link to take one from");
+    data.playlists = await fetchPlaylists(user, options);
   }
   if (options.likes) {
-    if (!options.user) throw new Error("--likes needs a user");
-    data.likes = await fetchLikes(options.user, limit > 0 ? limit : 50, options);
+    if (!user) throw new Error("likes needs a user, or a playlist link to take one from");
+    data.likes = await fetchLikes(user, limit > 0 ? limit : 50, options);
   }
   return data;
 }
